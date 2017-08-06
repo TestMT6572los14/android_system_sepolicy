@@ -50,9 +50,13 @@ sepolicy_build_files := security_classes \
                         mls \
                         policy_capabilities \
                         te_macros \
-                        attributes \
+                        attributes
+ifeq ($(POLICYVERS),30)
+sepolicy_build_files += \
                         ioctl_defines \
-                        ioctl_macros \
+                        ioctl_macros
+endif
+sepolicy_build_files += \
                         *.te \
                         roles \
                         users \
@@ -97,6 +101,7 @@ $(sepolicy_policy.conf): $(call build_policy, $(sepolicy_build_files))
 		-D target_build_variant=$(TARGET_BUILD_VARIANT) \
 		-D target_needs_platform_text_relocations=$(TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS) \
 		-D shipping_build=$(CYNGN_TARGET) \
+		-D old_sepolicy=$(POLICYVERS) \
 		-s $^ > $@
 	$(hide) sed '/dontaudit/d' $@ > $@.dontaudit
 

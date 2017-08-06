@@ -50,9 +50,11 @@ allow mediadrmserver mediadrmserver_service:service_manager { add find };
 allow mediadrmserver mediaserver_service:service_manager { add find };
 allow mediadrmserver processinfo_service:service_manager find;
 
+ifelse(old_sepolicy, `30',
 # only allow unprivileged socket ioctl commands
 allowxperm mediadrmserver self:{ rawip_socket tcp_socket udp_socket }
   ioctl { unpriv_sock_ioctls unpriv_tty_ioctls };
+)
 
 ###
 ### neverallow rules
@@ -62,5 +64,7 @@ allowxperm mediadrmserver self:{ rawip_socket tcp_socket udp_socket }
 # domain transition
 neverallow mediadrmserver { file_type fs_type }:file execute_no_trans;
 
+ifelse(old_sepolicy, `30',
 # do not allow privileged socket ioctl commands
 neverallowxperm mediadrmserver domain:{ rawip_socket tcp_socket udp_socket } ioctl priv_sock_ioctls;
+)
